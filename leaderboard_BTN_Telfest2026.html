@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaderboard BTN — Teladan Festival 2026</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Arial,sans-serif;background:#F0F4FA;min-height:100vh;padding:16px}
+  .wrap{max-width:700px;margin:0 auto;display:flex;flex-direction:column;gap:10px}
+
+  /* HERO */
+  .hero{background:#1B3F6E;border-radius:14px;padding:20px;position:relative;overflow:hidden;color:white}
+  .hero::before{content:'';position:absolute;top:0;right:0;width:100px;height:100px;background:#F07B28;border-radius:0 14px 0 100px;opacity:.22}
+  .hero::after{content:'';position:absolute;bottom:0;left:0;width:70px;height:70px;background:#47B5D6;border-radius:0 70px 0 14px;opacity:.18}
+  .hero-inner{display:flex;align-items:center;gap:20px;position:relative;z-index:1}
+  .hero-label{font-size:10px;letter-spacing:2px;color:#F5C842;font-weight:700;margin-bottom:6px}
+  .hero-title{font-size:19px;font-weight:700;line-height:1.2;margin-bottom:4px}
+  .hero-sub{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:14px}
+  .stats-row{display:flex;gap:22px}
+  .stat-val{font-size:22px;font-weight:700;line-height:1}
+  .stat-lbl{font-size:10px;color:rgba(255,255,255,.45);margin-top:2px}
+  .hero-bar-wrap{margin-top:18px;position:relative;z-index:1}
+  .hero-bar-track{background:rgba(255,255,255,.1);border-radius:99px;height:6px;overflow:hidden}
+  .hero-bar-fill{height:100%;background:#47B5D6;border-radius:99px;transition:width .5s ease}
+  .hero-bar-labels{display:flex;justify-content:space-between;margin-top:5px}
+  .hero-bar-labels span{font-size:10px;color:rgba(255,255,255,.4)}
+
+  /* PODIUM */
+  .podium{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+  .podium-card{border-radius:12px;padding:12px 10px;text-align:center;border-width:1px;border-style:solid}
+  .podium-rank{font-size:11px;font-weight:700;margin-bottom:3px}
+  .podium-icon{font-size:24px;display:block}
+  .podium-name{font-size:11px;font-weight:700;color:#1A1A2E;margin-top:6px;line-height:1.3}
+  .podium-pct{font-size:20px;font-weight:700;margin-top:5px}
+  .podium-count{font-size:10px;color:#666}
+
+  /* TOOLBAR */
+  .toolbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  .legend{display:flex;gap:5px;flex-wrap:wrap}
+  .badge{font-size:10px;padding:3px 8px;border-radius:99px;font-weight:600;border-width:0.5px;border-style:solid}
+  .btn-edit{font-size:12px;background:#1B3F6E;color:white;border:none;border-radius:8px;padding:7px 16px;cursor:pointer;font-weight:700;transition:background .2s}
+  .btn-edit:hover{background:#0e2a4a}
+  .btn-edit.active{background:#F07B28}
+  .btn-edit.active:hover{background:#d4660f}
+
+  /* ROWS */
+  .lb-list{display:flex;flex-direction:column;gap:5px}
+  .lb-row{border-radius:10px;padding:10px 12px;border-width:0.5px;border-style:solid;transition:background .2s}
+  .row-inner{display:flex;align-items:center;gap:10px}
+  .rank-circle{min-width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;border-width:0.5px;border-style:solid}
+  .row-body{flex:1;min-width:0}
+  .row-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+  .row-name{font-size:13px;font-weight:700;color:#1A1A2E;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60%}
+  .status-tag{font-size:10px;padding:2px 8px;border-radius:99px;font-weight:700;flex-shrink:0;margin-left:6px;border-width:0.5px;border-style:solid;background:white}
+  .bar-track{background:#E0E0E0;border-radius:99px;height:6px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:99px;transition:width .4s ease}
+  .row-meta{font-size:10px;color:#888;margin-top:3px}
+  .row-right{text-align:right;min-width:54px;flex-shrink:0}
+  .row-count{font-size:16px;font-weight:700;color:#1A1A2E;line-height:1}
+  .row-target{font-size:10px;color:#888;margin-top:1px}
+  .row-pct{font-size:11px;font-weight:700;margin-top:1px}
+  .count-input{width:46px;font-size:13px;font-weight:700;text-align:center;padding:2px 4px;border:1.5px solid #47B5D6;border-radius:6px;color:#1B3F6E}
+
+  /* FOOTER */
+  .footer{background:#F5F5F7;border-radius:10px;padding:12px 14px;border:0.5px solid #E0E0E0}
+  .footer p{font-size:11px;color:#666;line-height:1.6}
+  .footer strong{color:#1B3F6E}
+
+  /* section label */
+  .section-label{font-size:11px;font-weight:700;color:#555;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+
+  @media(max-width:480px){
+    .hero-inner{flex-direction:column;align-items:flex-start}
+    .podium{grid-template-columns:repeat(3,1fr)}
+    .stats-row{gap:14px}
+    .stat-val{font-size:18px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div id="app"></div>
+
+ <div class="footer">
+    <p style="text-align: center;">
+      📋 Target: <strong>500 akun</strong> &nbsp;|&nbsp; Setiap anggota wajib <strong>2 akun</strong> &nbsp;|&nbsp; Deadline: <strong>29 Mei 2026</strong>
+    </p>
+  </div>
+
+</div>
+
+<script>
+const NAV='#1B3F6E', ORG='#F07B28', SKY='#47B5D6', GRN='#6BB635', YLW='#F5C842';
+
+const DIVISI=[
+  {id:1,  name:'BPH & Struktural',          members:14},
+  {id:2,  name:'Divisi Acara',               members:9},
+  {id:3,  name:'Divisi Kreatif TERAS PENSI', members:9},
+  {id:4,  name:'Divisi Kreatif TERA',        members:5},
+  {id:5,  name:'Divisi Guest Star',          members:9},
+  {id:6,  name:'Divisi Humas TERAS PENSI',   members:7},
+  {id:7,  name:'Divisi Humas TERA',          members:4},
+  {id:8,  name:'Divisi Campaign & Ads',      members:6},
+  {id:9,  name:'Penyutradaraan',             members:9},
+  {id:10, name:'Divisi Stage TERAS PENSI',   members:7},
+  {id:11, name:'Divisi Flooring',            members:8},
+  {id:12, name:'Divisi Tata Busana TERA',    members:1},
+  {id:13, name:'Divisi IT & Dokumentasi',    members:10},
+  {id:14, name:'Divisi Paramedis',           members:6},
+  {id:15, name:'Divisi Keamanan',            members:24},
+  {id:16, name:'Divisi Konsumsi',            members:7},
+  {id:17, name:'Divisi Sponsorship',         members:6},
+  {id:18, name:'Divisi Merchandise',         members:7},
+  {id:19, name:'Divisi Ticketing TERAS',     members:8},
+  {id:20, name:'Divisi Ticketing TERA',      members:4},
+  {id:21, name:'Divisi Business Funds',      members:11},
+  {id:22, name:'Divisi Tenant',              members:3},
+  {id:23, name:'Divisi Perlengkapan',        members:25},
+  {id:24, name:'Divisi Logistik',            members:4},
+  {id:25, name:'CAST — Teladan Opera',       members:34},
+];
+
+const GLOBAL_TARGET = 500;
+const DAYS_LEFT = 14;
+
+const RANK_STYLE = [
+  {bg:'#FFF8DC', border:YLW,      txt:'#7a5e00', icon:'🥇'},
+  {bg:'#F4F4F4', border:'#AAAAAA', txt:'#4a4a4a', icon:'🥈'},
+  {bg:'#FFF0E0', border:'#CD7F32', txt:'#7a3e00', icon:'🥉'},
+];
+
+// --- LOGIKA PENYIMPANAN DATA ---
+// Mengambil data yang tersimpan, jika tidak ada maka buat objek baru
+let counts = {
+  1: 0,  // BPH & Struktural
+  2: 0,  // Divisi Acara
+  3: 0,  // Divisi Kreatif TERAS PENSI
+  4: 0,  // Divisi Kreatif TERA
+  5: 0,  // Divisi Guest Star
+  6: 0,  // Divisi Humas TERAS PENSI
+  7: 0,  // Divisi Humas TERA
+  8: 0,  // Divisi Campaign & Ads
+  9: 0,  // Penyutradaraan
+  10: 0, // Divisi Stage TERAS PENSI
+  11: 0, // Divisi Flooring
+  12: 0, // Divisi Tata Busana TERA
+  13: 0, // Divisi IT & Dokumentasi
+  14: 0, // Divisi Paramedis
+  15: 0, // Divisi Keamanan
+  16: 0, // Divisi Konsumsi
+  17: 12, // Divisi Sponsorship
+  18: 0, // Divisi Merchandise
+  19: 0, // Divisi Ticketing TERAS
+  20: 0, // Divisi Ticketing TERA
+  21: 0, // Divisi Business Funds
+  22: 0, // Divisi Tenant
+  23: 0, // Divisi Perlengkapan
+  24: 0, // Divisi Logistik
+  25: 0  // CAST — Teladan Opera
+};
+
+let editMode = false;
+
+function statusOf(pct){
+  if(pct===100) return {bg:'#EEF7E4',bar:GRN,txt:'#2d5e0e',border:'#6BB635',label:'Selesai! 🎉'};
+  if(pct>=75)   return {bg:'#EEF7E4',bar:GRN,txt:'#2d5e0e',border:'#6BB635',label:'On track 🔥'};
+  if(pct>=40)   return {bg:'#FFFCE8',bar:YLW,txt:'#7a5e00',border:YLW,      label:'Progress ⚡'};
+  if(pct>0)     return {bg:'#FEF0E4',bar:ORG,txt:'#8a3a00',border:ORG,      label:'Perlu push 📣'};
+  return {bg:'#F8F8F8',bar:'#CCCCCC',txt:'#888888',border:'#DDDDDD',label:'Belum mulai'};
+}
+
+function getRows(){
+  return DIVISI.map(d=>{
+    const target = d.members*2;
+    const done   = counts[d.id] || 0; // Mengambil data asli (bisa lebih dari target)
+    const pct    = target>0 ? Math.round((Math.min(done, target)/target)*100) : 0;
+    return {...d, target, done, pct};
+  }).sort((a,b)=> b.pct-a.pct || b.done-a.done);
+}
+
+function getTotalDone(){
+  const total = Object.values(counts).reduce((s,v)=>s+(v||0),0);
+  return total; // Total asli semua input
+}
+
+function render(){
+  const rows      = getRows();
+  const totalDone = getTotalDone();
+  const ovPct     = Math.round((Math.min(totalDone, GLOBAL_TARGET)/GLOBAL_TARGET)*100);
+  const hasData   = rows.some(r=>r.done>0);
+
+  const R=46, C=58, circ=2*Math.PI*R;
+  const off = circ - (ovPct/100)*circ;
+
+  let html = '';
+
+  html += `
+  <div class="hero">
+    <div class="hero-inner">
+      <div style="flex-shrink:0">
+        <svg width="116" height="116" viewBox="0 0 116 116">
+          <circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="10"/>
+          <circle cx="${C}" cy="${C}" r="${R}" fill="none" stroke="${SKY}" stroke-width="10"
+            stroke-dasharray="${circ.toFixed(2)}" stroke-dashoffset="${off.toFixed(2)}"
+            stroke-linecap="round" transform="rotate(-90 ${C} ${C})"/>
+          <text x="${C}" y="${C-6}" text-anchor="middle" fill="white" font-size="22" font-weight="700" font-family="Arial">${ovPct}%</text>
+          <text x="${C}" y="${C+10}" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-size="9" font-family="Arial" letter-spacing="1">OVERALL</text>
+        </svg>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div class="hero-label">TELADAN FESTIVAL 2026</div>
+        <div class="hero-title">BTN Account Challenge 🏦</div>
+        <div class="hero-sub">Pendaftaran rekening Bank BTN · target 500 akun</div>
+        <div class="stats-row">
+          <div><div class="stat-val" style="color:${GRN}">${totalDone}</div><div class="stat-lbl">akun selesai</div></div>
+          <div><div class="stat-val" style="color:${ORG}">${Math.max(0, GLOBAL_TARGET-totalDone)}</div><div class="stat-lbl">sisa target</div></div>
+          <div><div class="stat-val" style="color:${SKY}">${DAYS_LEFT}</div><div class="stat-lbl">hari tersisa</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-bar-wrap">
+      <div class="hero-bar-track">
+        <div class="hero-bar-fill" style="width:${ovPct}%"></div>
+      </div>
+      <div class="hero-bar-labels">
+        <span>${totalDone} akun terdaftar</span>
+        <span>target: ${GLOBAL_TARGET}</span>
+      </div>
+    </div>
+  </div>`;
+
+  if(hasData){
+    html += `<div class="section-label">🏆 Top divisi saat ini</div><div class="podium">`;
+    rows.slice(0,3).forEach((d,i)=>{
+      const rc = RANK_STYLE[i];
+      html += `
+      <div class="podium-card" style="background:${rc.bg};border-color:${rc.border}">
+        <div class="podium-rank" style="color:${rc.txt}">#${i+1}</div>
+        <span class="podium-icon">${rc.icon}</span>
+        <div class="podium-name">${d.name}</div>
+        <div class="podium-pct" style="color:${rc.txt}">${d.pct}%</div>
+        <div class="podium-count">${d.done}/${d.target} akun</div>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  html += `
+  <div class="toolbar">
+    <div class="legend">
+      <span class="badge" style="background:#EEF7E4;color:#2d5e0e;border-color:#2d5e0e40">On track (≥75%)</span>
+      <span class="badge" style="background:#FFFCE8;color:#7a5e00;border-color:#7a5e0040">Progress (40–74%)</span>
+      <span class="badge" style="background:#FEF0E4;color:#8a3a00;border-color:#8a3a0040">Perlu push (&lt;40%)</span>
+    </div>
+  </div>`;
+
+  html += `<div class="lb-list">`;
+  rows.forEach((d,i)=>{
+    const s    = statusOf(d.pct);
+    const isT3 = hasData && i<3;
+    const rc   = isT3 ? RANK_STYLE[i] : null;
+
+    html += `
+    <div class="lb-row" style="background:${s.bg};border-color:${isT3?rc.border:'#DDDDDD'}">
+      <div class="row-inner">
+        <div class="rank-circle" style="background:${isT3?rc.bg:'#FFF'};border-color:${isT3?rc.border:'#DDD'};color:${isT3?rc.txt:'#888'}">${i+1}</div>
+        <div class="row-body">
+          <div class="row-top">
+            <span class="row-name">${d.name}</span>
+            <span class="status-tag" style="color:${s.txt};border-color:${s.border}">${s.label}</span>
+          </div>
+          <div class="bar-track">
+            <div class="bar-fill" style="width:${d.pct}%;background:${s.bar}"></div>
+          </div>
+          <div class="row-meta">${d.members} anggota × 2 = target ${d.target}</div>
+        </div>
+        <div class="row-right">
+          <div class="row-count">${d.done}</div>
+          <div class="row-target">/${d.target}</div>
+          <div class="row-pct" style="color:${s.txt}">${d.pct}%</div>
+        </div>
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  document.getElementById('app').innerHTML = html;
+}
+
+function toggleEdit(){
+  editMode = !editMode;
+  render();
+}
+
+function updateCount(id, val){
+  counts[id] = parseInt(val) || 0;
+  // Simpan ke localStorage setiap ada perubahan input
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(counts));
+  
+  clearTimeout(window._rt);
+  window._rt = setTimeout(render, 800); 
+}
+
+render();
+</script>
+</body>
+</html>
