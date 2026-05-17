@@ -84,11 +84,12 @@
   <div id="app"></div>
 
  <div class="footer">
-    <p style="text-align: center;">
-      📋 Target: <strong>500 akun</strong> &nbsp;|&nbsp; Setiap anggota wajib <strong>2 akun</strong> &nbsp;|&nbsp; Deadline: <strong>29 Mei 2026</strong>
+    <p style="text-align: center;"> 
+     📋 Target: <strong>1000 akun</strong> &nbsp;|&nbsp; Setiap anggota wajib <strong>4 akun</strong> &nbsp;|&nbsp; Deadline: <strong>29 Mei 2026</strong> 
     </p>
   </div>
 
+ 
 </div>
 
 <script>
@@ -122,7 +123,7 @@ const DIVISI=[
   {id:25, name:'CAST — Teladan Opera',       members:34},
 ];
 
-const GLOBAL_TARGET = 500;
+const GLOBAL_TARGET = 1000;
 const DAYS_LEFT = 14;
 
 const RANK_STYLE = [
@@ -173,7 +174,7 @@ function statusOf(pct){
 
 function getRows(){
   return DIVISI.map(d=>{
-    const target = d.members*2;
+    const target = d.members*4;
     const done   = counts[d.id] || 0; // Mengambil data asli (bisa lebih dari target)
     const pct    = target>0 ? Math.round((Math.min(done, target)/target)*100) : 0;
     return {...d, target, done, pct};
